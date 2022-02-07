@@ -72,20 +72,6 @@ export default {
     },
   },
   methods: {
-    changeUseful(id) {
-      const Useful = localStorage.getItem("Useful");
-      if (Useful) {
-        const parseJson = Useful;
-      }
-      var house = street.houses.find((h) =>
-          h.rooms.some((r) => r.id === roomId)
-      );
-    },
-    changeUnUseful(id) {
-      var house = street.houses.find((h) =>
-          h.rooms.some((r) => r.id === roomId)
-      );
-    },
     dynamicSort(property) {
       var sortOrder = 1;
       if (property[0] === "-") {
@@ -93,9 +79,6 @@ export default {
         property = property.substr(1);
       }
       return function (a, b) {
-        /* next line works with strings and numbers,
-         * and you may want to customize it to your needs
-         */
         var result =
             a[property] < b[property] ? -1 : a[property] > b[property] ? 1 : 0;
         return result * sortOrder;
