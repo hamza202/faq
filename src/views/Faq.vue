@@ -14,32 +14,27 @@
           <div class="accordion" role="tablist">
             <b-card
                 v-for="(faq, faqIndex) in category.Questions"
-                :key="faq.Priority + '-' + faqIndex"
+                :key="`${faq.Priority} - ${faqIndex}`"
                 no-body
                 class=""
             >
               <b-card-header header-tag="header" class="p-1" role="tab">
                 <b-button
                     block
-                    v-b-toggle="'faq' + faq.Priority"
+                    v-b-toggle="'faq' + faqIndex"
                     variant="info"
                 >
                   {{ faq.Priority + " - " + faq.Title }}</b-button
                 >
               </b-card-header>
               <b-collapse
-                  :id="'faq' + faq.Priority"
+                  :id="'faq' + faqIndex"
                   accordion="my-accordion"
-                  role="tabpanel"
-              >
+                  role="tabpanel">
                 <b-card-body>
                   <b-card-text>{{ faq.Body }}</b-card-text>
                   <div>
-                    <b-button
-                        variant="useful-btn"
-                        @click="changeUseful(faq.Priority)"
-                    >useful</b-button
-                    >
+                    <b-button variant="useful-btn">useful</b-button>
                     <b-button variant="useful-btn">not useful</b-button>
                   </div>
                 </b-card-body>
@@ -86,10 +81,13 @@ export default {
     },
   },
   mounted() {
-    this.faqs = Faqs;
     const faqs = Faqs;
-    for (let faqsIndex = 0; faqsIndex < faqs.length; faqsIndex++) {
-      const Questions = faqs[faqsIndex].Questions;
+
+    this.faqs = faqs.sort(this.dynamicSort("Priority"));
+
+    const dataFaqs = this.faqs
+    for (let faqsIndex = 0; faqsIndex < dataFaqs.length; faqsIndex++) {
+      const Questions = dataFaqs[faqsIndex].Questions;
       Questions.sort(this.dynamicSort("Priority"));
       this.faqs[faqsIndex].Questions = Questions;
     }
