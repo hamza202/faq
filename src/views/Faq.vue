@@ -21,14 +21,14 @@
               <b-card-header header-tag="header" class="p-1" role="tab">
                 <b-button
                     block
-                    v-b-toggle="'faq' + faqIndex"
+                    v-b-toggle="'faq' + faqIndex + faq.Priority"
                     variant="info"
                 >
                   {{ faq.Priority + " - " + faq.Title }}</b-button
                 >
               </b-card-header>
               <b-collapse
-                  :id="'faq' + faqIndex"
+                  :id="'faq' + faqIndex + faq.Priority"
                   accordion="my-accordion"
                   role="tabpanel">
                 <b-card-body>
