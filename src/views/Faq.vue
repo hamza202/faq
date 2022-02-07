@@ -5,46 +5,48 @@
     </div>
     <b-card no-body class="">
       <b-tabs pills card :vertical="vertical">
-        <b-tab class=""
-          v-for="(category, categoryIndex) in faqs"
-          :key="categoryIndex"
-          :title="category.Name"
-          ><b-card-text>
-            <div class="accordion" role="tablist">
-              <b-card
-                v-for="faq in category.Questions"
-                :key="faq.Priority"
+        <b-tab
+            class=""
+            v-for="(category, categoryIndex) in faqs"
+            :key="categoryIndex"
+            :title="category.Name"
+        ><b-card-text>
+          <div class="accordion" role="tablist">
+            <b-card
+                v-for="(faq, faqIndex) in category.Questions"
+                :key="faq.Priority + '-' + faqIndex"
                 no-body
                 class=""
-              >
-                <b-card-header header-tag="header" class="p-1" role="tab">
-                  <b-button
+            >
+              <b-card-header header-tag="header" class="p-1" role="tab">
+                <b-button
                     block
                     v-b-toggle="'faq' + faq.Priority"
                     variant="info"
-                    >{{ faq.Title }}</b-button
-                  >
-                </b-card-header>
-                <b-collapse
+                >
+                  {{ faq.Priority + " - " + faq.Title }}</b-button
+                >
+              </b-card-header>
+              <b-collapse
                   :id="'faq' + faq.Priority"
                   accordion="my-accordion"
                   role="tabpanel"
-                >
-                  <b-card-body>
-                    <b-card-text>{{ faq.Body }}</b-card-text>
-                    <div>
-                      <b-button
+              >
+                <b-card-body>
+                  <b-card-text>{{ faq.Body }}</b-card-text>
+                  <div>
+                    <b-button
                         variant="useful-btn"
                         @click="changeUseful(faq.Priority)"
-                        >useful</b-button
-                      >
-                      <b-button variant="useful-btn">not useful</b-button>
-                    </div>
-                  </b-card-body>
-                </b-collapse>
-              </b-card>
-            </div>
-          </b-card-text></b-tab
+                    >useful</b-button
+                    >
+                    <b-button variant="useful-btn">not useful</b-button>
+                  </div>
+                </b-card-body>
+              </b-collapse>
+            </b-card>
+          </div>
+        </b-card-text></b-tab
         >
       </b-tabs>
     </b-card>
@@ -60,7 +62,7 @@ export default {
   data() {
     return {
       faqs: [],
-      size: 0
+      size: 0,
     };
   },
   computed: {
@@ -76,18 +78,39 @@ export default {
         const parseJson = Useful;
       }
       var house = street.houses.find((h) =>
-        h.rooms.some((r) => r.id === roomId)
+          h.rooms.some((r) => r.id === roomId)
       );
     },
     changeUnUseful(id) {
       var house = street.houses.find((h) =>
-        h.rooms.some((r) => r.id === roomId)
+          h.rooms.some((r) => r.id === roomId)
       );
+    },
+    dynamicSort(property) {
+      var sortOrder = 1;
+      if (property[0] === "-") {
+        sortOrder = -1;
+        property = property.substr(1);
+      }
+      return function (a, b) {
+        /* next line works with strings and numbers,
+         * and you may want to customize it to your needs
+         */
+        var result =
+            a[property] < b[property] ? -1 : a[property] > b[property] ? 1 : 0;
+        return result * sortOrder;
+      };
     },
   },
   mounted() {
     this.faqs = Faqs;
-    console.log(Faqs);
+    const faqs = Faqs;
+    for (let faqsIndex = 0; faqsIndex < faqs.length; faqsIndex++) {
+      const Questions = faqs[faqsIndex].Questions;
+      Questions.sort(this.dynamicSort("Priority"));
+      this.faqs[faqsIndex].Questions = Questions;
+    }
+
     var that = this;
     that.size = window.innerWidth;
     window.onresize = function () {
